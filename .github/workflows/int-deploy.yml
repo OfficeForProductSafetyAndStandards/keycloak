@@ -16,10 +16,10 @@ jobs:
         sudo cp /tmp/cf7 /usr/local/bin/cf7
     - name: Deploy to int
       env:
-        SPACE: staging
+        SPACE: int
         APP_NAME: keycloak
-        CF_USERNAME: ${{ secrets.PaaSUsernameStaging }}
-        CF_PASSWORD: ${{ secrets.PaaSPasswordStaging }}
+        CF_USERNAME: ${{ secrets.PaaSUsernameInt }}
+        CF_PASSWORD: ${{ secrets.PaaSPasswordInt }}
       run: |
         cf7 api api.london.cloud.service.gov.uk
         cf7 auth
