@@ -1,0 +1,29 @@
+name: Deploy
+
+on: [pull_request]
+
+jobs:
+  deploy:
+    name: Deploy to int
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install cf client
+      env:
+        CF_CLI_VERSION: 7.0.0-beta.25
+      run: |
+        curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=${CF_CLI_VERSION}" | tar -zx -C /tmp
+        sudo cp /tmp/cf7 /usr/local/bin/cf7
+    - name: Deploy to int
+      env:
+        SPACE: staging
+        APP_NAME: keycloak
+        CF_USERNAME: ${{ secrets.PaaSUsernameStaging }}
+        CF_PASSWORD: ${{ secrets.PaaSPasswordStaging }}
+      run: |
+        cf7 api api.london.cloud.service.gov.uk
+        cf7 auth
+        cf7 target -o 'beis-opss' -s $SPACE
+        chmod +x ./deploy.sh
+        ./deploy.sh
+        cf7 logout
