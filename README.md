@@ -11,8 +11,16 @@ for user identity and access management (IdAM).
 We're using the [GOV.UK theme](https://github.com/UKGovernmentBEIS/keycloak-theme-govuk) for Keycloak (forked from the
 [original theme](https://github.com/UKHomeOffice/keycloak-theme-govuk) maintained by the Home Office).
 
+## Running locally
+
+In most cases, there is no need to run keycloak from this repo. However, there is
+docker compose file which setups everything in such case.
 
 ## Getting Setup
+
+This project includes [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so when running `git clone` you need to add the `--recurse-submodules` option.
+If you have already pulled, you can run `git submodule init` and then `git submodule update --recursive` instead.
+You might also need to run `git submodule update --recursive` if the submodule is updated because of a pull.
 
 This assumes you've followed the setup steps in [the root README](../README.md#getting-setup).
 
@@ -33,7 +41,7 @@ Keycloak is automatically deployed to the relevant environment by Travis CI, as 
 
 ### Deployment from scratch
 
-Login to GOV.UK PaaS and set the relevant space as described in [the root README](../README.md#deployment-from-scratch).
+Login to GOV.UK PaaS and set the relevant space as described in [the cosmetics README](https://github.com/UKGovernmentBEIS/beis-opss).
 
 
 #### Database
@@ -55,7 +63,7 @@ Start by setting up the following credentials:
         "NOTIFY_API_KEY": "XXX",
         "NOTIFY_SMS_TEMPLATE_ID": "XXX"
     }'
-    
+
 Once all the credentials are created, the app can be deployed using:
 
     SPACE=<<space>> ./keycloak/deploy.sh
@@ -101,7 +109,7 @@ Allow keycloak to redirect back to the app after login
 * Replace all `localhost` values with `https://<<PSD domain>>/`
 
 Follow the steps in [the SMS autheticator README's Configuration section](
-https://github.com/UKGovernmentBEIS/keycloak-sms-authenticator-sns/blob/develop/README.md#Configuration) 
+https://github.com/UKGovernmentBEIS/keycloak-sms-authenticator-sns/blob/develop/README.md#Configuration)
 to enable SMS two factor authentication. Set the 2FA code length to 6.
 
 ### Setup event logging
@@ -119,10 +127,10 @@ WARN  [org.jboss.jca.core.connectionmanager.pool.strategy.OnePool] (ServerServic
 Caused by: org.postgresql.util.PSQLException: FATAL: database "keycloak" does not exist
 ```
 
-The first time `$ docker-compose up` is run in the root directory, a keycloak database is created according to 
+The first time `$ docker-compose up` is run in the root directory, a keycloak database is created according to
 `/postgres/setup-keycloak.sh`. This database shares a docker volume with the dev database.
 
-If the local keycloak database is subsequently dropped but the development database is not, then this script will not 
+If the local keycloak database is subsequently dropped but the development database is not, then this script will not
 run the next time you run `$ docker-compose up`.
 
 To recreate the database, start the postgres command line with
@@ -130,3 +138,14 @@ To recreate the database, start the postgres command line with
 ```$ docker-compose exec postgres --username keycloak```
 
 then in the postgres interface run each command from `/postgres/setup-keycloak.sh`.
+
+##### Problem: blank page after logging in to admin console in cloud keycloak
+
+In such case, there is problem with cloud router. Make sure you have forwarded headers properly:
+
+```
+cf update-service my-cdn-route \
+    -c '{"headers": ["Accept", "Authorization"]}'
+```
+
+https://docs.cloud.service.gov.uk/deploying_services/use_a_custom_domain/#amend-the-service
