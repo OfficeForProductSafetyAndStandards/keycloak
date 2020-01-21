@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  db:
+    build:
+      context: ./local-db
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    env_file:
+      - .env.keycloak
+
+  keycloak:
+    build:
+      context: .
+    env_file:
+      - .env.keycloak
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+#    This can speed up development when working on themes in keycloak, by not requiring to rebuild the keycloak image
+#    to pickup changes, instead simply restarting the keycloak container
+#    volumes:
+#      - ${PWD-.}/keycloak/govuk-theme/govuk:/opt/jboss/keycloak/themes/govuk
+volumes:
+  postgres-volume:
