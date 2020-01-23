@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+      with:
+        submodules: recursive
     - name: Install cf client
       env:
         CF_CLI_VERSION: 7.0.0-beta.25
