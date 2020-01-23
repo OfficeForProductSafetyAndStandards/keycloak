@@ -19,7 +19,7 @@ else
     HOSTNAME=$SPACE
 fi
 APP=keycloak
-APP_PREEXISTS=$(cf app $APP && echo 0 || echo 1)
+APP_PREEXISTS=$(cf7 app $APP && echo 0 || echo 1)
 
 if [[ $APP_PREEXISTS ]]; then
     # We should deploy to a temporary location such that we can do a blue-green deployment
@@ -40,7 +40,7 @@ cp -a ./infrastructure/env/. ./keycloak/env/
 cp -a ./keycloak/env/. ./keycloak/package/env/
 
 # Deploy the new app, set the hostname and start the app
-cf push $NEW_APP -f ./keycloak/manifest.yml -d $DOMAIN --hostname $NEW_HOSTNAME
+cf7 push $NEW_APP -f ./keycloak/manifest.yml -d $DOMAIN --hostname $NEW_HOSTNAME
 
 if [[ ! $APP_PREEXISTS ]]; then
     # We don't need to go any further
@@ -50,14 +50,14 @@ fi
 # TODO smoke test or manual confirmation?
 
 # Unmap the temporary hostname from the new app
-cf unmap-route $NEW_APP $DOMAIN --hostname $NEW_HOSTNAME
+cf7 unmap-route $NEW_APP $DOMAIN --hostname $NEW_HOSTNAME
 
 # Map the live hostname to the new app
-cf map-route $NEW_APP $DOMAIN --hostname $HOSTNAME
+cf7 map-route $NEW_APP $DOMAIN --hostname $HOSTNAME
 
 # Unmap the live hostanme from the old app
-cf unmap-route $APP $DOMAIN --hostname $HOSTNAME
+cf7 unmap-route $APP $DOMAIN --hostname $HOSTNAME
 
 # Remove the old app and rename the new one
-cf delete -f $APP
-cf rename $NEW_APP $APP
+cf7 delete -f $APP
+cf7 rename $NEW_APP $APP
