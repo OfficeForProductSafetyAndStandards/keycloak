@@ -14,7 +14,7 @@ jobs:
       run: |
         curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=${CF_CLI_VERSION}" | tar -zx -C /tmp
         sudo cp /tmp/cf7 /usr/local/bin/cf7
-    - name: Build && push docker
+    - name: Build and push docker
       run: |
         export PR_NUMBER=`echo $GITHUB_REF | grep -o '[0-9_]\+'`
         export BUILD_ID=$PR_NUMBER
