@@ -36,8 +36,8 @@ fi
 # docker cp $(docker create keycloak-package):/tmp/keycloak/package ./keycloak
 
 # Copy the environment helper script
-cp -a ./infrastructure/env/. ./keycloak/env/
-cp -a ./keycloak/env/. ./keycloak/package/env/
+mkdir package
+cp -a ./env. ./package/env/
 
 # Deploy the new app, set the hostname and start the app
 cf7 push $NEW_APP -f ./keycloak/manifest.yml -d $DOMAIN --hostname $NEW_HOSTNAME
