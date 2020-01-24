@@ -37,8 +37,7 @@ fi
 
 # Copy the environment helper script
 mkdir package
-ls
-cp -r env. package/env/
+cp -a ./env ./package/env/
 
 # Deploy the new app, set the hostname and start the app
 cf7 push $NEW_APP -f ./keycloak/manifest.yml -d $DOMAIN --hostname $NEW_HOSTNAME
