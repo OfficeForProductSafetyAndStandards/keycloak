@@ -40,7 +40,7 @@ mkdir package
 cp -a ./env ./package/env/
 
 # Deploy the new app, set the hostname and start the app
-cf7 push $NEW_APP -f ./keycloak/manifest.yml -d $DOMAIN --hostname $NEW_HOSTNAME
+cf7 push $NEW_APP -f manifest.yml -d $DOMAIN --hostname $NEW_HOSTNAME
 
 if [[ ! $APP_PREEXISTS ]]; then
     # We don't need to go any further
