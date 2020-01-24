@@ -36,7 +36,6 @@ docker build --target keycloak-package -t keycloak-package:latest .
 docker cp $(docker create keycloak-package):/tmp/keycloak/package .
 
 # Copy the environment helper script
-mkdir package
 cp -a ./env ./package/env/
 
 # Deploy the new app, set the hostname and start the app
