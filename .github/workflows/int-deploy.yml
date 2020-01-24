@@ -30,5 +30,6 @@ jobs:
         cf7 auth
         cf7 target -o 'beis-opss' -s $SPACE
         chmod +x ./deploy.sh
+        ls
         ./deploy.sh
         cf7 logout
