@@ -32,8 +32,8 @@ else
     NEW_APP=$APP
 fi
 
-# docker build --target keycloak-package -t keycloak-package:latest ./keycloak
-# docker cp $(docker create keycloak-package):/tmp/keycloak/package ./keycloak
+docker build --target keycloak-package -t keycloak-package:latest .
+docker cp $(docker create keycloak-package):/tmp/keycloak/package .
 
 # Copy the environment helper script
 mkdir package
