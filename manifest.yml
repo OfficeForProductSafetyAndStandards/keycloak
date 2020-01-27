@@ -2,6 +2,8 @@
 applications:
 - name: keycloak
   memory: 1G
+  routes:
+    - route: ((hostname))
   instances: 1
   buildpacks:
     - https://github.com/kirmerzlikin/keycloak-buildpack
