@@ -39,8 +39,8 @@ jobs:
       env:
         SPACE: prod
         APP_NAME: keycloak
-        CF_USERNAME: ${{ secrets.PaaSUsernameProd }}
-        CF_PASSWORD: ${{ secrets.PaaSPasswordProd }}
+        CF_USERNAME: ${{ secrets.PaaSUsernameProduction }}
+        CF_PASSWORD: ${{ secrets.PaaSPasswordProduction }}
       run: |
         cf7 api api.london.cloud.service.gov.uk
         cf7 auth
