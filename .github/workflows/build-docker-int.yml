@@ -16,7 +16,7 @@ jobs:
     - name: Build and push docker
       run: |
         export PR_NUMBER=`echo $GITHUB_REF | grep -o '[0-9_]\+'`
-        export BUILD_ID=latest
+        export BUILD_ID=$PR_NUMBER
         docker login -u=${{ secrets.DockerHubUsername }} -p=${{ secrets.DockerHubPassword }}
         docker build -t beisopss/keycloak:$BUILD_ID .
         docker push beisopss/keycloak:$BUILD_ID
