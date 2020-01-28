@@ -1,49 +1,50 @@
-# name: Deploy
-#
-# on:
-#   push:
-#     branches:
-#       - master
-#
-# jobs:
-#   deploy:
-#     name: Deploy to Staging and Production
-#     runs-on: ubuntu-latest
-#     steps:
-#     - uses: actions/checkout@v1
-#     - name: Install cf client
-#       env:
-#         CF_CLI_VERSION: 7.0.0-beta.25
-#       run: |
-#         curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=${CF_CLI_VERSION}" | tar -zx -C /tmp
-#         sudo cp /tmp/cf7 /usr/local/bin/cf7
-#     - name: Deploy to staging
-#       env:
-#         SPACE: staging
-#         APP_NAME: keycloak
-#         CF_USERNAME: ${{ secrets.PaaSUsernameStaging }}
-#         CF_PASSWORD: ${{ secrets.PaaSPasswordStaging }}
-#       run: |
-#         cf7 api api.london.cloud.service.gov.uk
-#         cf7 auth
-#         cf7 target -o 'beis-opss' -s $SPACE
-#         chmod +x ./deploy.sh
-#         ./deploy.sh
-#         cf7 logout
-#     - name: Deploy to production
-#       env:
-#         SPACE: prod
-#         APP_NAME: keycloak
-#         CF_USERNAME: ${{ secrets.PaaSUsernameProduction }}
-#         CF_PASSWORD: ${{ secrets.PaaSPasswordProduction }}
-#       run: |
-#         cf7 api api.london.cloud.service.gov.uk
-#         cf7 auth
-#         cf7 target -o 'beis-opss' -s $SPACE
-#         chmod +x ./deploy.sh
-#         ./deploy.sh
-#         cf7 logout
-#     - name: Build Docker
-#         docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-#         # docker build
-#         # docker tag
+name: Deploy production
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Checkout submodules
+      shell: bash
+      run: |
+        GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git submodule init
+        GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git submodule update --recursive
+    - name: Install cf client
+      env:
+        CF_CLI_VERSION: 7.0.0-beta.25
+      run: |
+        curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=${CF_CLI_VERSION}" | tar -zx -C /tmp
+        sudo cp /tmp/cf7 /usr/local/bin/cf7
+    - name: Deploy to staging
+      env:
+        SPACE: staging
+        APP_NAME: keycloak
+        CF_USERNAME: ${{ secrets.PaaSUsernameStaging }}
+        CF_PASSWORD: ${{ secrets.PaaSPasswordStaging }}
+      run: |
+        cf7 api api.london.cloud.service.gov.uk
+        cf7 auth
+        cf7 target -o 'beis-opss' -s $SPACE
+        chmod +x ./deploy.sh
+        ./deploy.sh
+        cf7 logout
+    - name: Deploy to production
+      env:
+        SPACE: prod
+        APP_NAME: keycloak
+        CF_USERNAME: ${{ secrets.PaaSUsernameProd }}
+        CF_PASSWORD: ${{ secrets.PaaSPasswordProd }}
+      run: |
+        cf7 api api.london.cloud.service.gov.uk
+        cf7 auth
+        cf7 target -o 'beis-opss' -s $SPACE
+        chmod +x ./deploy.sh
+        ./deploy.sh
+        cf7 logout
